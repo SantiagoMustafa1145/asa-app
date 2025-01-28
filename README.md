@@ -1,50 +1,39 @@
-# Welcome to your Expo app 👋
+# ASA APP
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## PROGRESO DEL DESARROLLO
 
-## Get started
+### features
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [x] Registro de Ventas
+  - [x] Diferenciar entre "Revendedor" y "Consumidor".
+  - [x] Generar el precio a cobrar automáticamente.
+  - [x] Registrar en una tabla todas las ventas del dia actual.
+  - [x] Posibilidad de modificar el precio para consumidor y revendedor (solo para roles de "admin", "supervisor" y "owner").
+- [x] Registro de Distribuidores
+  - [x] Registrar cantidad de bidones por cada salida del repartidor.
+  - [x] Registrar cantidad de aguas vacías, llenas y vendidas por el repartidor en cada viaje realizado.
+  - [x] Mostrar error cuando la sumatoria de aguas "vacías", "llenas" y vendidas no coincide con la cantidad de salida.
+- [x] Registro de Asistencia.
+  - [x] Registro de Hora automático (Solo se necesita ingresar el DNI y especificar si es "entrada" o "salida").
+  - [x] Diferenciar entre turno mañana y turno tarde (AM, PM).
+- [ ] Generar Informes.
+  - [ ] Generar archivos PDF en donde se mostrará un resumen de:
+    - [ ] Asistencias:
+      - [ ] Horarios de entrada y salida de cada día (diferenciando los de la mañana y tarde).
+      - [ ] Total de horas trabajadas en la semana.
+    - [ ] Distribuidores:
+      - [ ] Total de bidones vendidos por día.
+      - [ ] Total de bidones vendidos por semana.
+      - [ ] Un breve contraste con la semana anterior para hacer una comparativa de las ventas de la última semana.
+    - [ ] Ventas:
+      - [ ] Total de ventas realizadas por día.
+      - [ ] Diferenciar las ventas por Revendedor o Consumidor.
+      - [ ] Total de ventas realizadas en la semana.
+      - [ ] Una breve comparación con la semana anterior para realizar con contraste con las ventas de la última semana.
+    - [ ] Resumen General:
+      - [ ] Total de ingresos obtenidos por ventas.
+      - [ ] Total de ingresos obtenidos por Distribuidores.
+      - [ ] Total pagado a los empleados.
+      - [ ] Total de ingresos general.
+      - [ ] Total de ingresos obtenidos por reventas.
+- [ ] Manejo de autenticación y roles
