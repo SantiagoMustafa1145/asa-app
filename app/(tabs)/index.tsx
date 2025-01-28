@@ -1,18 +1,10 @@
 import CardResume from "@/components/index/CardResume";
 import useAuth from "@/store/user";
 import { Redirect } from "expo-router";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Button } from "react-native";
 
 export default function HomeScreen() {
-  const {
-    user,
-  }: {
-    user: {
-      nombre: string;
-      dni: number;
-      rol: "empleado" | "supervisor" | "admin";
-    };
-  } = useAuth();
+  const { user, logout } = useAuth();
 
   if (!user) {
     return <Redirect href={"/login"} />;
@@ -29,6 +21,7 @@ export default function HomeScreen() {
       >
         Bienvenido {user.nombre.toLocaleUpperCase()}
       </Text>
+      <Button title=" Cerrar Sesión " onPress={logout} />
       <CardResume
         href="/(tabs)/ventas"
         title="Ir a Ventas"
