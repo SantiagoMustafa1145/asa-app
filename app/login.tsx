@@ -1,9 +1,40 @@
 import useAuth from "@/store/user";
-import { Alert, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View, Button } from "react-native";
 import { useForm, Controller } from "react-hook-form";
-import { Button, TextInput } from "react-native-paper";
-import { Redirect } from "expo-router";
+import { TextInput } from "react-native-paper";
+import { Link, Redirect } from "expo-router";
 import { useEffect } from "react";
+
+// Styles
+const styles = StyleSheet.create({
+  container: {
+    padding: 8,
+    gap: 16,
+    justifyContent: "center",
+    height: "100%",
+  },
+  formContainer: {
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "black",
+    gap: 16,
+  },
+  inputContainer: {
+    gap: 8,
+  },
+  input: {},
+  text: {
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "black",
+    borderWidth: 0.5,
+    borderColor: "#777",
+    padding: 8,
+    borderRadius: 8,
+  },
+});
 
 export default function LoginView() {
   const { user, login } = useAuth();
@@ -40,34 +71,41 @@ export default function LoginView() {
     return <Redirect href={"/(tabs)"} />;
   }
   return (
-    <View>
-      <View>
-        <Controller
-          control={control}
-          name="dni"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="DNI"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="PASSWORD"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-            />
-          )}
-        />
+    <View style={styles.container}>
+      <View style={styles.formContainer}>
+        <View style={styles.inputContainer}>
+          <Controller
+            control={control}
+            name="dni"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                placeholder="DNI"
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                style={styles.input}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                placeholder="PASSWORD"
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                style={styles.input}
+              />
+            )}
+          />
+        </View>
+        <Button onPress={handleSubmit(handlePress)} title={"Ingresar"} />
       </View>
-      <Button onPress={handleSubmit(handlePress)}>Ingresar</Button>
+      <Link style={styles.text} href={"/register"}>
+        Registrar una cuenta
+      </Link>
     </View>
   );
 }
