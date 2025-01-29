@@ -45,22 +45,7 @@ export default function Asistencias() {
         }) => {
           // If the request was successful, update state with the data
           if (success) {
-            const newData = data.map(({ id, dni, turno, out, entrada }) => {
-              return {
-                id,
-                dni,
-                turno,
-                out: new Date(out!).toLocaleTimeString("es-MX", {
-                  timeZone: "America/Argentina/Buenos_Aires",
-                  hour12: false,
-                }),
-                entrada: new Date(entrada).toLocaleTimeString("es-MX", {
-                  timeZone: "America/Argentina/Buenos_Aires",
-                  hour12: false,
-                }),
-              };
-            });
-            setAsistencias([...newData]);
+            setAsistencias([...data]);
           }
         }
       );
@@ -109,7 +94,6 @@ export default function Asistencias() {
             .then((r) => r.json())
             .then(
               ({ success, data }: { data: Asistencia; success: boolean }) => {
-                console.log({ data });
                 if (success) {
                   setAsistencias(
                     asistencias.map((a) =>
@@ -304,6 +288,7 @@ export default function Asistencias() {
               {asistencias.length > 0 &&
                 asistencias.map(({ id, dni, nombre, entrada, out }) => {
                   if (!out) return;
+                  console.log({ entrada, out });
                   return (
                     <DataTable.Row key={id}>
                       <DataTable.Cell>{nombre ? nombre : dni}</DataTable.Cell>
