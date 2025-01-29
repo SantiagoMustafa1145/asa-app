@@ -282,7 +282,12 @@ export default function Ventas() {
             <Text>Precio Consumidor</Text>
             <TextInput
               placeholder={`Ingresa un nuevo valor para Ventas`}
-              onChangeText={setVentas}
+              onChangeText={(text) => {
+                const regex = /^\d+$/;
+                if (regex.test(text) || text == "") {
+                  setVentas(text);
+                }
+              }}
               value={ventas}
               style={styles.input}
             />
@@ -291,7 +296,12 @@ export default function Ventas() {
             <Text>Precio Revendedor</Text>
             <TextInput
               placeholder={`Ingresa un nuevo valor para Reventas`}
-              onChangeText={setReventas}
+              onChangeText={(text) => {
+                const regex = /^\d+$/;
+                if (regex.test(text) || text == "") {
+                  setReventas(text);
+                }
+              }}
               value={reventas}
               style={styles.input}
             />

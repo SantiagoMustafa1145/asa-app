@@ -253,7 +253,7 @@ export default function Distribuidores() {
                       0
                         ? setError("Este distribuidor tiene un viaje pendiente")
                         : setError("");
-                      setNombre(text);
+                      setNombre(text.toLowerCase());
                     }}
                     value={nombre}
                   />

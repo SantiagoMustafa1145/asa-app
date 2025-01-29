@@ -12,6 +12,7 @@ interface Asistencia {
   turno: string;
   entrada: string;
   out?: string;
+  horas?: string;
 }
 
 type Turno = "mañana" | "tarde";
@@ -154,8 +155,13 @@ export default function Asistencias() {
           <TextInput
             placeholder="DNI"
             onChangeText={(text) => {
-              setDNI(text);
-              setError("");
+              const regex = /^\d+$/;
+              if (regex.test(text) || text == "") {
+                setDNI(text);
+                setError("");
+              } else {
+                setError("Solo se permiten números");
+              }
             }}
             value={DNI}
             placeholderTextColor={error ? "red" : "black"}
@@ -284,16 +290,19 @@ export default function Asistencias() {
                 <DataTable.Title>NOMBRE</DataTable.Title>
                 <DataTable.Title>INGRESO</DataTable.Title>
                 <DataTable.Title>EGRESO</DataTable.Title>
+                <DataTable.Title>HORAS HECHAS</DataTable.Title>
               </DataTable.Header>
               {asistencias.length > 0 &&
-                asistencias.map(({ id, dni, nombre, entrada, out }) => {
+                asistencias.map(({ id, dni, nombre, entrada, out, horas }) => {
                   if (!out) return;
-                  console.log({ entrada, out });
                   return (
                     <DataTable.Row key={id}>
-                      <DataTable.Cell>{nombre ? nombre : dni}</DataTable.Cell>
+                      <DataTable.Cell>
+                        {nombre ? nombre.toLocaleUpperCase() : dni}
+                      </DataTable.Cell>
                       <DataTable.Cell>{entrada}</DataTable.Cell>
                       <DataTable.Cell>{out}</DataTable.Cell>
+                      <DataTable.Cell>{horas}</DataTable.Cell>
                     </DataTable.Row>
                   );
                 })}

@@ -107,7 +107,12 @@ export default function RegisterView() {
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 placeholder="DNI"
-                onChangeText={onChange}
+                onChangeText={(text) => {
+                  const regex = /^\d+$/;
+                  if (regex.test(text)) {
+                    onChange(text);
+                  }
+                }}
                 onBlur={onBlur}
                 value={value}
               />
@@ -121,9 +126,9 @@ export default function RegisterView() {
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 placeholder="NOMBRE"
-                onChangeText={onChange}
+                onChangeText={() => onChange(value.toLowerCase())}
                 onBlur={onBlur}
-                value={value}
+                value={value.toLowerCase()}
               />
             )}
           />
@@ -135,9 +140,9 @@ export default function RegisterView() {
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 placeholder="ROL"
-                onChangeText={onChange}
+                onChangeText={() => onChange(value.toLowerCase())}
                 onBlur={onBlur}
-                value={value}
+                value={value.toLowerCase()}
               />
             )}
           />

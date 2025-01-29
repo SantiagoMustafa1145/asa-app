@@ -80,7 +80,12 @@ export default function LoginView() {
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 placeholder="DNI"
-                onChangeText={onChange}
+                onChangeText={(text) => {
+                  const regex = /^\d+$/;
+                  if (regex.test(text)) {
+                    onChange(text);
+                  }
+                }}
                 onBlur={onBlur}
                 value={value}
                 style={styles.input}
