@@ -33,7 +33,6 @@ export default function Table({
         {list.length >= 1 &&
           list.map(({ id, client, count, total, date }) => {
             const [day, hour] = date?.split(",");
-
             return (
               <DataTable.Row key={id}>
                 <DataTable.Cell>{client}</DataTable.Cell>

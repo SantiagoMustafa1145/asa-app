@@ -1,4 +1,5 @@
-import { Link } from "expo-router";
+import generatePdf from "@/utils/generatePDF";
+import { Link, router } from "expo-router";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
 
@@ -36,29 +37,6 @@ export default function ResumeCard({
   disable?: boolean;
   url?: string;
 }) {
-  const handlePDFGenerate = () => {
-    fetch(`https://asa-app-backend.onrender.com/resume${url}`, {
-      method: "GET",
-    })
-      .then((r) => r.json())
-      .then(({ pdfUrl }) => {
-        const pdf = `https://asa-app-backend.onrender.com${pdfUrl}`;
-        window.alert(
-          `El informe se genero correctamente, puedes verlo en ${pdf}`
-        );
-        Alert.alert(
-          "Informe generado",
-          "El informe se ha generado correctamente",
-          [
-            {
-              text: "Ver informe",
-              onPress: () => <Link href={pdf} target="_blank" push={true} />,
-            },
-          ]
-        );
-      });
-  };
-
   return (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>{title}</Text>
@@ -67,7 +45,11 @@ export default function ResumeCard({
       </View>
       <Button
         mode="contained-tonal"
-        onPress={handlePDFGenerate}
+        onPress={() => {
+          if (url) {
+            generatePdf(url);
+          }
+        }}
         disabled={disable}
       >
         <Text>Generar informe</Text>

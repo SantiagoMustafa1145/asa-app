@@ -108,7 +108,6 @@ export default function Ventas() {
         id: Date.now(),
         client: tipoVenta,
         total: total,
-        date: new Date().toLocaleString(),
         count,
       }),
     })
@@ -121,7 +120,10 @@ export default function Ventas() {
               id: Date.now(),
               client: tipoVenta,
               total: total,
-              date: new Date().toLocaleString(),
+              date: new Date().toLocaleString("es-MX", {
+                timeZone: "America/Argentina/Buenos_Aires",
+                hour12: false,
+              }),
               count,
             },
           ]);

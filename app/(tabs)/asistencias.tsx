@@ -10,8 +10,8 @@ interface Asistencia {
   dni: string;
   nombre?: string;
   turno: string;
-  entrada: Date;
-  out?: Date;
+  entrada: string;
+  out?: string;
 }
 
 type Turno = "mañana" | "tarde";
@@ -50,8 +50,14 @@ export default function Asistencias() {
                 id,
                 dni,
                 turno,
-                out: new Date(out!),
-                entrada: new Date(entrada),
+                out: new Date(out!).toLocaleTimeString("es-MX", {
+                  timeZone: "America/Argentina/Buenos_Aires",
+                  hour12: false,
+                }),
+                entrada: new Date(entrada).toLocaleTimeString("es-MX", {
+                  timeZone: "America/Argentina/Buenos_Aires",
+                  hour12: false,
+                }),
               };
             });
             setAsistencias([...newData]);
@@ -72,14 +78,20 @@ export default function Asistencias() {
       const nuevaAsistencia: Asistencia = {
         id: Date.now(),
         dni: DNI,
-        entrada: new Date(),
+        entrada: new Date().toLocaleTimeString("es-MX", {
+          timeZone: "America/Argentina/Buenos_Aires",
+          hour12: false,
+        }),
         turno: turno,
       };
 
       setAsistencias([...asistencias, nuevaAsistencia]);
     } else {
       asistencias.map((a) => {
-        const now = new Date();
+        const now = new Date().toLocaleTimeString("es-MX", {
+          timeZone: "America/Argentina/Buenos_Aires",
+          hour12: false,
+        });
         // Check if the dni and turno match and the user hasn't checked out
         a.dni === DNI &&
           a.turno === turno &&
@@ -104,9 +116,6 @@ export default function Asistencias() {
                       a.dni === DNI && a.turno === turno && !a.out
                         ? {
                             ...data,
-                            out: new Date(data.out!),
-                            entrada: new Date(data.entrada),
-                            nombre: data.nombre,
                           }
                         : a
                     )
@@ -273,9 +282,7 @@ export default function Asistencias() {
                   return (
                     <DataTable.Row key={id}>
                       <DataTable.Cell>{dni}</DataTable.Cell>
-                      <DataTable.Cell>
-                        {entrada.toLocaleTimeString()}
-                      </DataTable.Cell>
+                      <DataTable.Cell>{entrada}</DataTable.Cell>
                       <DataTable.Cell>FALTA SALIDA</DataTable.Cell>
                     </DataTable.Row>
                   );
@@ -300,12 +307,8 @@ export default function Asistencias() {
                   return (
                     <DataTable.Row key={id}>
                       <DataTable.Cell>{nombre ? nombre : dni}</DataTable.Cell>
-                      <DataTable.Cell>
-                        {entrada.toLocaleTimeString()}
-                      </DataTable.Cell>
-                      <DataTable.Cell>
-                        {out.toLocaleTimeString()}
-                      </DataTable.Cell>
+                      <DataTable.Cell>{entrada}</DataTable.Cell>
+                      <DataTable.Cell>{out}</DataTable.Cell>
                     </DataTable.Row>
                   );
                 })}
