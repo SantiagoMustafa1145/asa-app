@@ -130,6 +130,27 @@ export default function Asistencias() {
     setDNI("");
   };
 
+  const actualizarDatos = () => {
+    fetch("https://asa-app-backend.onrender.com/asistencias", {
+      method: "GET",
+    })
+      .then((r) => r.json())
+      .then(
+        ({
+          success,
+          data,
+        }: {
+          success: boolean;
+          data: Asistencia[];
+          message: string;
+        }) => {
+          // If the request was successful, update state with the data
+          if (success) {
+            setAsistencias([...data]);
+          }
+        }
+      );
+  };
   return (
     <ScrollView>
       <View
@@ -275,30 +296,12 @@ export default function Asistencias() {
             style={{
               backgroundColor: "#ccc",
               borderRadius: 8,
+              maxWidth: 130,
+              marginLeft: "auto",
+              width: "100%",
             }}
-            onPress={() => {
-              fetch("https://asa-app-backend.onrender.com/asistencias", {
-                method: "GET",
-              })
-                .then((r) => r.json())
-                .then(
-                  ({
-                    success,
-                    data,
-                  }: {
-                    success: boolean;
-                    data: Asistencia[];
-                    message: string;
-                  }) => {
-                    // If the request was successful, update state with the data
-                    if (success) {
-                      setAsistencias([...data]);
-                    }
-                  }
-                );
-            }}
+            onPress={actualizarDatos}
           >
-            {/* <Image /> */}
             <Text
               style={{
                 padding: 8,
