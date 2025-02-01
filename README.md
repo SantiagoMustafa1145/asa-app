@@ -1,5 +1,10 @@
 # ASA APP
 
+## Sobre la App
+
+Aplicación de gestión de datos para una empresa. Esta empresa necesita gestionar de manera más automatizada y certera los datos de sus ventas, distribución de pedidos y horarios de los empleados; para ésto se desarrollo una aplicación para celular llamada "asa-app", la cual cuenta con la capacidad de manejar autenticación de cada empelado, por su DNI y contraseña.
+Actualmente en su versión 1.4.9 permite el registro de ventas, información de distribuidores y el horario de los empleados, éstos dos últimos solamente son accesibles si el rol del empleado(usuario) es igual o superior a "supervisor".
+
 ## PROGRESO DEL DESARROLLO
 
 ### features
