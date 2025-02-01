@@ -82,7 +82,7 @@ export default function LoginView() {
                 placeholder="DNI"
                 onChangeText={(text) => {
                   const regex = /^\d+$/;
-                  if (regex.test(text)) {
+                  if (regex.test(text) || text == "") {
                     onChange(text);
                   }
                 }}

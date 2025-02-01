@@ -2,7 +2,7 @@ import { Link, RelativePathString } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 interface Props {
-  href: RelativePathString;
+  href: string;
   title: string;
   description: string;
 }
