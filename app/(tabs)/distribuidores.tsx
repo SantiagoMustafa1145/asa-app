@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { DataTable } from "react-native-paper";
 import { Redirect } from "expo-router";
-import { Text, View, TextInput, ScrollView } from "react-native";
+import { Text, View, TextInput, ScrollView, Pressable } from "react-native";
 import { Button } from "react-native-paper";
 import { useState } from "react";
 import checkSession from "@/utils/checkSession";
@@ -11,17 +11,14 @@ import styles from "@/css/distribuidores";
 // Types
 interface Distribuidor {
   id: number;
+  dni: string;
   nombre: string;
   up: number;
-  empty?: number;
-  down?: number;
-  sell?: number;
-}
-
-interface Incompletos {
-  id: number;
-  nombre: string;
-  up: number;
+  empty: number;
+  down: number;
+  sell: number;
+  fecha: string;
+  estado: "completado" | "incompleto";
 }
 
 //View
@@ -32,15 +29,9 @@ export default function Distribuidores() {
   // List of distribuidores
   const [distribuidores, setDistribuidores] = useState<Distribuidor[]>([]);
 
-  // List of incompletos
-  const [distIncompletos, setDistIncompletos] = useState<Incompletos[]>([]);
-
   // data of Distribuidor form
   const [nombre, setNombre] = useState("");
   const [up, setUp] = useState(0);
-  const [down, setDown] = useState(0);
-  const [sell, setSell] = useState(0);
-  const [empty, setEmpty] = useState(0);
 
   // Count of drivers whit incomplete trips
   const [incompletos, setIncompletos] = useState(0);
@@ -58,9 +49,10 @@ export default function Distribuidores() {
       method: "GET",
     })
       .then((r) => r.json())
-      .then(({ success, data }) => {
+      .then(({ success, data }: { success: boolean; data: Distribuidor[] }) => {
         if (success) {
           setDistribuidores([...data]);
+          setIncompletos(data.filter((x) => x.estado == "incompleto").length);
         }
       });
   }, []);
@@ -70,64 +62,108 @@ export default function Distribuidores() {
     setRegistro(!registro);
   };
 
+  const actualizarDatos = () => {
+    fetch("https://asa-app-backend.onrender.com/distribuidores/", {
+      method: "GET",
+    })
+      .then((r) => r.json())
+      .then(({ success, data }: { success: boolean; data: Distribuidor[] }) => {
+        if (success) {
+          setDistribuidores([...data]);
+          setIncompletos(data.filter((x) => x.estado == "incompleto").length);
+        }
+      });
+  };
+
   // Register a new egreso
   const registrarEgreso = () => {
     if (error) return;
-    setDistIncompletos([
-      ...distIncompletos,
-      {
-        id: Date.now(),
+    fetch("https://asa-app-backend.onrender.com/distribuidores/egreso", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
         nombre,
         up,
-      },
-    ]);
-    setIncompletos(incompletos + 1);
-    setNombre("");
-    setUp(0);
+        estado: "incompleto",
+      }),
+    })
+      .then((r) => r.json())
+      .then(
+        ({
+          success,
+          message,
+          data,
+        }: {
+          success: boolean;
+          message: string;
+          data: Distribuidor;
+        }) => {
+          setDistribuidores([
+            ...distribuidores,
+            {
+              ...data,
+            },
+          ]);
+          setIncompletos(incompletos + 1);
+          setNombre("");
+          setUp(0);
+        }
+      )
+      .catch((e) => {
+        console.log({ e });
+        setError(e.message);
+      });
   };
 
   // Register end of a trip
-  const registrarIngreso = (name: string) => {
-    const newIncompletos: Incompletos[] = [];
-    distIncompletos.map((dist) => {
+  const registrarIngreso = (x: Distribuidor) => {
+    distribuidores.map((dist) => {
       // Search for the driver to register
-      if (dist.nombre === name) {
+      console.log(
+        dist.nombre === x.nombre && dist.estado == "incompleto",
+        dist.nombre,
+        x.nombre,
+        dist.estado,
+        x.estado
+      );
+      if (dist.nombre === x.nombre && dist.estado == "incompleto") {
         // Check if the amount of bidones is correct
-        if (dist.up === down + sell + empty) {
+        if (dist.up === x.down + x.sell + x.empty) {
           // Send data to the backend
-          fetch("https://asa-app-backend.onrender.com/distribuidores/", {
-            method: "POST",
+          fetch("https://asa-app-backend.onrender.com/distribuidores/ingreso", {
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
               ...dist,
-              down,
-              sell,
-              empty,
+              down: x.down,
+              sell: x.sell,
+              empty: x.empty,
+              estado: "completado",
             }),
           })
             .then((r) => r.json())
             .then(({ success, data }) => {
               // If the data was send and save correctly update the Distribuidores state
               if (success) {
-                setDistribuidores([...distribuidores, data]);
+                let newDist = distribuidores.filter(
+                  (d) =>
+                    d.estado == "completado" ||
+                    (d.estado == "incompleto" && d.nombre !== x.nombre)
+                );
+                setDistribuidores([...newDist, data]);
                 setIncompletos(incompletos - 1);
                 setErrorIngreso("");
-                setDown(0);
-                setEmpty(0);
-                setSell(0);
               }
             });
         } else {
           setErrorIngreso(`La cantidad de bidones no coincide para ${name}`);
-          newIncompletos.push(dist);
         }
-      } else {
-        newIncompletos.push(dist);
       }
     });
-    setDistIncompletos(newIncompletos);
   };
 
   return (
@@ -249,8 +285,9 @@ export default function Distribuidores() {
                     placeholder="Nombre del distribuidor"
                     style={styles.input}
                     onChangeText={(text) => {
-                      distIncompletos.filter((x) => x.nombre == text).length !==
-                      0
+                      distribuidores.filter(
+                        (x) => x.nombre == text && x.estado == "incompleto"
+                      ).length !== 0
                         ? setError("Este distribuidor tiene un viaje pendiente")
                         : setError("");
                       setNombre(text.toLowerCase());
@@ -312,8 +349,9 @@ export default function Distribuidores() {
                   borderRadius: 8,
                 }}
               >
-                {distIncompletos.length ? (
-                  distIncompletos.map((dist) => {
+                {distribuidores.length ? (
+                  distribuidores.map((dist) => {
+                    if (dist.estado === "completado") return;
                     return (
                       <View key={dist.id}>
                         <View
@@ -370,7 +408,8 @@ export default function Distribuidores() {
                               style={style.input}
                               placeholder="Sobrantes"
                               onChangeText={(text) => {
-                                setDown(text == "" ? 0 : Number.parseInt(text));
+                                dist.down =
+                                  text == "" ? 0 : Number.parseInt(text);
                               }}
                             />
                             <Text
@@ -385,9 +424,8 @@ export default function Distribuidores() {
                               style={style.input}
                               placeholder="Vacíos"
                               onChangeText={(text) => {
-                                setEmpty(
-                                  text == "" ? 0 : Number.parseInt(text)
-                                );
+                                dist.empty =
+                                  text == "" ? 0 : Number.parseInt(text);
                               }}
                             />
                             <Text
@@ -402,12 +440,13 @@ export default function Distribuidores() {
                               style={style.input}
                               placeholder="Vendidos"
                               onChangeText={(text) => {
-                                setSell(text == "" ? 0 : Number.parseInt(text));
+                                dist.sell =
+                                  text == "" ? 0 : Number.parseInt(text);
                               }}
                             />
                           </View>
                         </View>
-                        <Button onPress={() => registrarIngreso(dist.nombre)}>
+                        <Button onPress={() => registrarIngreso(dist)}>
                           Registrar Ingreso
                         </Button>
                       </View>
@@ -430,6 +469,25 @@ export default function Distribuidores() {
         </View>
 
         <View style={{ padding: 8, borderWidth: 1, borderRadius: 8, gap: 16 }}>
+          <Pressable
+            style={{
+              backgroundColor: "#ccc",
+              borderRadius: 8,
+              maxWidth: 130,
+              marginLeft: "auto",
+              width: "100%",
+            }}
+            onPress={actualizarDatos}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                padding: 8,
+              }}
+            >
+              Actualizar 🔄
+            </Text>
+          </Pressable>
           <Text
             style={{ fontSize: 20, fontWeight: "bold", textAlign: "center" }}
           >
@@ -453,15 +511,20 @@ export default function Distribuidores() {
                 Vendidos
               </DataTable.Title>
             </DataTable.Header>
-            {distribuidores.map(({ nombre, up, down, sell, empty, id }) => (
-              <DataTable.Row key={id}>
-                <DataTable.Cell>{nombre}</DataTable.Cell>
-                <DataTable.Cell>{up}</DataTable.Cell>
-                <DataTable.Cell>{empty}</DataTable.Cell>
-                <DataTable.Cell>{down}</DataTable.Cell>
-                <DataTable.Cell>{sell}</DataTable.Cell>
-              </DataTable.Row>
-            ))}
+            {distribuidores.map(
+              ({ nombre, up, down, sell, empty, id, estado }) => {
+                if (estado === "incompleto") return;
+                return (
+                  <DataTable.Row key={id}>
+                    <DataTable.Cell>{nombre}</DataTable.Cell>
+                    <DataTable.Cell>{up}</DataTable.Cell>
+                    <DataTable.Cell>{empty}</DataTable.Cell>
+                    <DataTable.Cell>{down}</DataTable.Cell>
+                    <DataTable.Cell>{sell}</DataTable.Cell>
+                  </DataTable.Row>
+                );
+              }
+            )}
           </DataTable>
         </View>
       </View>
