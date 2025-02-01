@@ -1,7 +1,7 @@
 import checkSession from "@/utils/checkSession";
 import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, ScrollView, Text, View } from "react-native";
+import { Button, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { DataTable, TextInput } from "react-native-paper";
 
 // Types
@@ -13,6 +13,7 @@ interface Asistencia {
   entrada: string;
   out?: string;
   horas?: string;
+  estado: "completo" | "incompleto";
 }
 
 type Turno = "mañana" | "tarde";
@@ -23,7 +24,7 @@ type Tipo = "entrada" | "salida";
 export default function Asistencias() {
   // States
   const [DNI, setDNI] = useState<string>("");
-  const [asistencias, setAsistencias] = useState<Asistencia[]>([]);
+  const [asistencias, setAsistencias] = useState<Asistencia[]>();
   const [turno, setTurno] = useState<Turno>("mañana");
   const [tipo, setTipo] = useState<Tipo>("entrada");
   const [error, setError] = useState<string | undefined>("");
@@ -57,39 +58,54 @@ export default function Asistencias() {
     return <Redirect href={"/login"} />;
   }
 
-  // Handle asistencia register
+  // Handle asistencia register (OPTIMIZATION REQUIRED)
   const handleRegister = () => {
     if (!DNI) return setError("Debes completar el campo del DNI");
     if (tipo == "entrada") {
-      const nuevaAsistencia: Asistencia = {
-        id: Date.now(),
-        dni: DNI,
-        entrada: new Date().toLocaleTimeString("es-MX", {
-          timeZone: "America/Argentina/Buenos_Aires",
-          hour12: false,
+      fetch("https://asa-app-backend.onrender.com/asistencias/ingreso", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          id: Date.now(),
+          dni: DNI,
+          entrada: new Date().toLocaleTimeString("es-MX", {
+            timeZone: "America/Argentina/Buenos_Aires",
+            hour12: false,
+          }),
+          turno: turno,
+          estado: "incompleto",
         }),
-        turno: turno,
-      };
-
-      setAsistencias([...asistencias, nuevaAsistencia]);
+      })
+        .then((r) => r.json())
+        .then(({ success, message, data }) => {
+          if (success) {
+            console.log({ data });
+            setAsistencias(asistencias ? [...asistencias, data] : [data]);
+          }
+        })
+        .catch((e) => console.log({ e }));
     } else {
-      asistencias.map((a) => {
+      asistencias!.map((a) => {
         const now = new Date().toLocaleTimeString("es-MX", {
           timeZone: "America/Argentina/Buenos_Aires",
           hour12: false,
         });
         // Check if the dni and turno match and the user hasn't checked out
+        console.log({ a });
         a.dni === DNI &&
           a.turno === turno &&
-          !a.out &&
-          fetch("https://asa-app-backend.onrender.com/asistencias", {
-            method: "POST",
+          a.estado === "incompleto" &&
+          fetch("https://asa-app-backend.onrender.com/asistencias/egreso", {
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
               ...a,
               out: now,
+              estado: "completo",
             }),
           })
             .then((r) => r.json())
@@ -97,7 +113,7 @@ export default function Asistencias() {
               ({ success, data }: { data: Asistencia; success: boolean }) => {
                 if (success) {
                   setAsistencias(
-                    asistencias.map((a) =>
+                    asistencias!.map((a) =>
                       a.dni === DNI && a.turno === turno && !a.out
                         ? {
                             ...data,
@@ -107,7 +123,8 @@ export default function Asistencias() {
                   );
                 }
               }
-            );
+            )
+            .catch((e) => console.log({ e }));
       });
     }
     setDNI("");
@@ -254,6 +271,43 @@ export default function Asistencias() {
             paddingTop: 30,
           }}
         >
+          <Pressable
+            style={{
+              backgroundColor: "#ccc",
+              borderRadius: 8,
+            }}
+            onPress={() => {
+              fetch("https://asa-app-backend.onrender.com/asistencias", {
+                method: "GET",
+              })
+                .then((r) => r.json())
+                .then(
+                  ({
+                    success,
+                    data,
+                  }: {
+                    success: boolean;
+                    data: Asistencia[];
+                    message: string;
+                  }) => {
+                    // If the request was successful, update state with the data
+                    if (success) {
+                      setAsistencias([...data]);
+                    }
+                  }
+                );
+            }}
+          >
+            {/* <Image /> */}
+            <Text
+              style={{
+                padding: 8,
+                textAlign: "center",
+              }}
+            >
+              Actualizar 🔄
+            </Text>
+          </Pressable>
           <View>
             <Text
               style={{ fontSize: 18, fontWeight: "bold", textAlign: "center" }}
@@ -266,12 +320,15 @@ export default function Asistencias() {
                 <DataTable.Title>INGRESO</DataTable.Title>
                 <DataTable.Title>EGRESO</DataTable.Title>
               </DataTable.Header>
-              {asistencias.length > 0 &&
-                asistencias.map(({ id, dni, entrada, out }) => {
+              {asistencias &&
+                asistencias.map(({ id, dni, nombre, entrada, out }) => {
                   if (out) return;
                   return (
-                    <DataTable.Row key={id}>
-                      <DataTable.Cell>{dni}</DataTable.Cell>
+                    <DataTable.Row
+                      key={id}
+                      style={{ borderColor: "rgba(200, 60,60,.45)" }}
+                    >
+                      <DataTable.Cell>{nombre ? nombre : dni}</DataTable.Cell>
                       <DataTable.Cell>{entrada}</DataTable.Cell>
                       <DataTable.Cell>FALTA SALIDA</DataTable.Cell>
                     </DataTable.Row>
@@ -292,20 +349,22 @@ export default function Asistencias() {
                 <DataTable.Title>EGRESO</DataTable.Title>
                 <DataTable.Title>HORAS HECHAS</DataTable.Title>
               </DataTable.Header>
-              {asistencias.length > 0 &&
-                asistencias.map(({ id, dni, nombre, entrada, out, horas }) => {
-                  if (!out) return;
-                  return (
-                    <DataTable.Row key={id}>
-                      <DataTable.Cell>
-                        {nombre ? nombre.toLocaleUpperCase() : dni}
-                      </DataTable.Cell>
-                      <DataTable.Cell>{entrada}</DataTable.Cell>
-                      <DataTable.Cell>{out}</DataTable.Cell>
-                      <DataTable.Cell>{horas}</DataTable.Cell>
-                    </DataTable.Row>
-                  );
-                })}
+              {asistencias &&
+                asistencias.map(
+                  ({ id, dni, nombre, entrada, out, horas, estado }) => {
+                    if (!out || estado === "incompleto") return;
+                    return (
+                      <DataTable.Row key={id}>
+                        <DataTable.Cell>
+                          {nombre ? nombre.toLocaleUpperCase() : dni}
+                        </DataTable.Cell>
+                        <DataTable.Cell>{entrada}</DataTable.Cell>
+                        <DataTable.Cell>{out}</DataTable.Cell>
+                        <DataTable.Cell>{horas}</DataTable.Cell>
+                      </DataTable.Row>
+                    );
+                  }
+                )}
             </DataTable>
           </View>
         </View>
