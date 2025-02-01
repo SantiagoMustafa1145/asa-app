@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "asa-app",
-    "slug": "asa-app",
-    "version": "1.5.1",
+    "name": "Agua Santa Angela App",
+    "slug": "Agua Santa Angela APP",
+    "version": "1.6.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
