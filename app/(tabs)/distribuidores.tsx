@@ -188,6 +188,9 @@ export default function Distribuidores() {
           paddingInline: 8,
           gap: 32,
           justifyContent: "space-between",
+          maxWidth: 500,
+          width: "100%",
+          marginInline: "auto",
         }}
       >
         <View

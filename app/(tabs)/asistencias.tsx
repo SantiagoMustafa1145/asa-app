@@ -164,6 +164,10 @@ export default function Asistencias() {
       <View
         style={{
           padding: 16,
+          maxWidth: 500,
+          width: "100%",
+          marginInline: "auto",
+          gap: 20,
         }}
       >
         <Text

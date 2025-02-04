@@ -61,5 +61,8 @@ const styles = StyleSheet.create({
     gap: 20,
     justifyContent: "center",
     padding: 16,
+    maxWidth: 500,
+    width: "100%",
+    marginInline: "auto",
   },
 });

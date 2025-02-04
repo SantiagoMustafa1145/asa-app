@@ -12,6 +12,9 @@ const styles = StyleSheet.create({
     gap: 16,
     justifyContent: "center",
     height: "100%",
+    maxWidth: 500,
+    width: "100%",
+    marginInline: "auto",
   },
   formContainer: {
     padding: 8,

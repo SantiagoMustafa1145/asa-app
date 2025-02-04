@@ -222,119 +222,126 @@ export default function Ventas() {
   });
 
   return (
-    <ScrollView
-      style={{
-        gap: 32,
-      }}
-    >
-      <Text style={styles.title}>Selecciona el tipo de venta a registrar</Text>
-      <View style={styles.container}>
-        <View style={styles.typeContainer}>
-          <Pressable
-            onPress={() => handleToggleTipoVenta("consumidor")}
-            style={styles.vendedor}
-          >
-            <Text style={styles.vendedorText}>Consumidor</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => handleToggleTipoVenta("revendedor")}
-            style={styles.revendedor}
-          >
-            <Text style={styles.revendedorText}>Revendedor</Text>
-          </Pressable>
-        </View>
-        <View>
-          <Text>Cantidad de Aguas</Text>
-          <TextInput
-            placeholder="Cantidad de Aguas"
-            style={styles.input}
-            onChangeText={(data) => {
-              setCount(data == "" ? 0 : Number.parseInt(data));
-              calculatePrice(data == "" ? 0 : Number.parseInt(data));
-            }}
-            value={count.toString()}
-          />
-          {error && (
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 14,
-                fontWeight: "bold",
-                color: "white",
-                backgroundColor: "red",
-                borderWidth: 1,
-                borderColor: "red",
-                padding: 8,
-                borderRadius: 8,
-              }}
-            >
-              {error}
-            </Text>
-          )}
-        </View>
-        <View>
-          <Text>Monto Total</Text>
-          <Text style={styles.total}>
-            $ {total ? total.toLocaleString() : "0"}
-          </Text>
-        </View>
-        <Button
-          onPress={handlePress}
-          title="Registrar venta"
-          accessibilityLabel="Registrar una venta"
-        />
-      </View>
-      {user?.rol == "admin" && (
+    <ScrollView>
+      <View
+        style={{
+          gap: 32,
+          maxWidth: 500,
+          width: "100%",
+          marginInline: "auto",
+        }}
+      >
+        <Text style={styles.title}>
+          Selecciona el tipo de venta a registrar
+        </Text>
         <View style={styles.container}>
-          <Text style={styles.title}>Configura los precios</Text>
-          <View>
-            <Text>Precio Consumidor</Text>
-            <TextInput
-              placeholder={`Ingresa un nuevo valor para Ventas`}
-              onChangeText={(text) => {
-                const regex = /^\d+$/;
-                if (regex.test(text) || text == "") {
-                  setVentas(text);
-                  calculateNewPrice({ newVentas: text });
-                }
-              }}
-              value={ventas}
-              style={styles.input}
-            />
+          <View style={styles.typeContainer}>
+            <Pressable
+              onPress={() => handleToggleTipoVenta("consumidor")}
+              style={styles.vendedor}
+            >
+              <Text style={styles.vendedorText}>Consumidor</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => handleToggleTipoVenta("revendedor")}
+              style={styles.revendedor}
+            >
+              <Text style={styles.revendedorText}>Revendedor</Text>
+            </Pressable>
           </View>
           <View>
-            <Text>Precio Revendedor</Text>
+            <Text>Cantidad de Aguas</Text>
             <TextInput
-              placeholder={`Ingresa un nuevo valor para Reventas`}
-              onChangeText={(text) => {
-                const regex = /^\d+$/;
-                if (regex.test(text) || text == "") {
-                  setReventas(text);
-                  calculateNewPrice({ newReventas: text });
-                }
-              }}
-              value={reventas}
+              placeholder="Cantidad de Aguas"
               style={styles.input}
+              onChangeText={(data) => {
+                setCount(data == "" ? 0 : Number.parseInt(data));
+                calculatePrice(data == "" ? 0 : Number.parseInt(data));
+              }}
+              value={count.toString()}
             />
+            {error && (
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  color: "white",
+                  backgroundColor: "red",
+                  borderWidth: 1,
+                  borderColor: "red",
+                  padding: 8,
+                  borderRadius: 8,
+                }}
+              >
+                {error}
+              </Text>
+            )}
           </View>
-          <Button title="Guardar" onPress={handleTogglePrices} />
+          <View>
+            <Text>Monto Total</Text>
+            <Text style={styles.total}>
+              $ {total ? total.toLocaleString() : "0"}
+            </Text>
+          </View>
+          <Button
+            onPress={handlePress}
+            title="Registrar venta"
+            accessibilityLabel="Registrar una venta"
+          />
         </View>
-      )}
-      <View style={styles.container}>
-        <Text style={styles.title}>Resumen de hoy</Text>
-        <View style={{ gap: 16 }}>
-          <Text style={styles.total}>
-            Ventas realizadas hoy: {list.length.toLocaleString()}
-          </Text>
-          <Text style={styles.total}>
-            Total vendido hoy: $
-            {list
-              .reduce((prev, current) => current.total + prev, 0)
-              .toLocaleString()}
-          </Text>
+        {user?.rol == "admin" && (
+          <View style={styles.container}>
+            <Text style={styles.title}>Configura los precios</Text>
+            <View>
+              <Text>Precio Consumidor</Text>
+              <TextInput
+                placeholder={`Ingresa un nuevo valor para Ventas`}
+                onChangeText={(text) => {
+                  const regex = /^\d+$/;
+                  if (regex.test(text) || text == "") {
+                    setVentas(text);
+                    calculateNewPrice({ newVentas: text });
+                  }
+                }}
+                value={ventas}
+                style={styles.input}
+              />
+            </View>
+            <View>
+              <Text>Precio Revendedor</Text>
+              <TextInput
+                placeholder={`Ingresa un nuevo valor para Reventas`}
+                onChangeText={(text) => {
+                  const regex = /^\d+$/;
+                  if (regex.test(text) || text == "") {
+                    setReventas(text);
+                    calculateNewPrice({ newReventas: text });
+                  }
+                }}
+                value={reventas}
+                style={styles.input}
+              />
+            </View>
+            <Button title="Guardar" onPress={handleTogglePrices} />
+          </View>
+        )}
+        <View style={styles.container}>
+          <Text style={styles.title}>Resumen de hoy</Text>
+          <View style={{ gap: 16 }}>
+            <Text style={styles.total}>
+              Ventas realizadas hoy: {list.length.toLocaleString()}
+            </Text>
+            <Text style={styles.total}>
+              Total vendido hoy: $
+              {list
+                .reduce((prev, current) => current.total + prev, 0)
+                .toLocaleString()}
+            </Text>
+          </View>
         </View>
+        <Table list={list} />
       </View>
-      <Table list={list} />
     </ScrollView>
   );
 }

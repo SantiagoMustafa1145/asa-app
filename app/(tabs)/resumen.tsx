@@ -9,6 +9,9 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     gap: 30,
+    maxWidth: 500,
+    width: "100%",
+    marginInline: "auto",
   },
   cardContainer: {
     gap: 32,
