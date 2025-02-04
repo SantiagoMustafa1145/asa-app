@@ -1,12 +1,20 @@
 import React, { useEffect } from "react";
 import { DataTable } from "react-native-paper";
 import { Redirect } from "expo-router";
-import { Text, View, TextInput, ScrollView, Pressable } from "react-native";
+import {
+  Text,
+  View,
+  TextInput,
+  ScrollView,
+  Pressable,
+  Alert,
+} from "react-native";
 import { Button } from "react-native-paper";
 import { useState } from "react";
 import checkSession from "@/utils/checkSession";
 import style from "@/css/distribuidores";
 import styles from "@/css/distribuidores";
+import useAuth from "@/store/user";
 
 // Types
 interface Distribuidor {
@@ -40,8 +48,15 @@ export default function Distribuidores() {
   const [error, setError] = useState("");
   const [errorIngreso, setErrorIngreso] = useState("");
 
+  // User
+  const { user } = useAuth();
+
   // Check user session
   if (checkSession()) return <Redirect href={"/login"} />;
+  if (user?.rol === "empleado") {
+    Alert.alert("Acceso Denegado", "No cumples con los permisos para acceder");
+    return <Redirect href={"/"} />;
+  }
 
   // Fetch data
   useEffect(() => {
