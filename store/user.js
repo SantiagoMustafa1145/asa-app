@@ -68,14 +68,6 @@ const useAuth = create((set) => ({
    * @returns
    */
   register: async (dni, name, rol, password, passwordConfirm) => {
-    if (password !== passwordConfirm) {
-      return { success: false, password: "Las contraseñas no coinciden" };
-    }
-
-    if (password.length <= 6) {
-      return { success: false, password: "La contraseña es muy corta" };
-    }
-
     if (dni.length <= 7) {
       return { success: false, dni: "Debes ingresar un DNI valido" };
     }
@@ -86,6 +78,14 @@ const useAuth = create((set) => ({
 
     if (!rol) {
       return { success: false, rol: "Debes ingresar un rol valido" };
+    }
+
+    if (password !== passwordConfirm) {
+      return { success: false, password: "Las contraseñas no coinciden" };
+    }
+
+    if (password.length <= 6) {
+      return { success: false, password: "La contraseña es muy corta" };
     }
 
     const response = await fetch(`https://asa-app-backend.onrender.com/auth/`, {
