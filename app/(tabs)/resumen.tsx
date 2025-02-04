@@ -1,7 +1,8 @@
 import ResumeCard from "@/components/resume/card";
+import useAuth from "@/store/user";
 import checkSession from "@/utils/checkSession";
 import { Redirect } from "expo-router";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 
 // Styles
 const styles = StyleSheet.create({
@@ -15,8 +16,15 @@ const styles = StyleSheet.create({
 });
 
 export default function Resumen() {
+  const { user } = useAuth();
+
   if (checkSession()) {
     return <Redirect href={"/login"} />;
+  }
+
+  if (user?.rol === "empleado") {
+    Alert.alert("Acceso Denegado", "No cumples con los permisos para acceder");
+    return <Redirect href={"/"} />;
   }
   return (
     <ScrollView>
