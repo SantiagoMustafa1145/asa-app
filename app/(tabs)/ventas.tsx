@@ -35,9 +35,6 @@ export default function Ventas() {
   const { ventas, reventas, total, setReventas, setVentas, setTotal } =
     usePrice();
 
-  // Check user session
-  if (checkSession()) return <Redirect href={"/login"} />;
-
   // Fetch data for Ventas
   useEffect(() => {
     fetch("https://asa-app-backend.onrender.com/ventas", {
@@ -162,6 +159,9 @@ export default function Ventas() {
         )
     );
   };
+
+  // Check user session
+  if (checkSession()) return <Redirect href={"/login"} />;
 
   // styles
   const styles = StyleSheet.create({

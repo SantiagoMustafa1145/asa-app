@@ -51,13 +51,6 @@ export default function Distribuidores() {
   // User
   const { user } = useAuth();
 
-  // Check user session
-  if (checkSession()) return <Redirect href={"/login"} />;
-  if (user?.rol === "empleado") {
-    Alert.alert("Acceso Denegado", "No cumples con los permisos para acceder");
-    return <Redirect href={"/"} />;
-  }
-
   // Fetch data
   useEffect(() => {
     fetch("https://asa-app-backend.onrender.com/distribuidores/", {
@@ -180,6 +173,13 @@ export default function Distribuidores() {
       }
     });
   };
+
+  // Check user session
+  if (checkSession()) return <Redirect href={"/login"} />;
+  if (user?.rol === "empleado") {
+    Alert.alert("Acceso Denegado", "No cumples con los permisos para acceder");
+    return <Redirect href={"/"} />;
+  }
 
   return (
     <ScrollView>

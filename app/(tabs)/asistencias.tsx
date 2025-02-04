@@ -53,11 +53,6 @@ export default function Asistencias() {
       );
   }, []);
 
-  // Check user session
-  if (checkSession()) {
-    return <Redirect href={"/login"} />;
-  }
-
   // Handle asistencia register (OPTIMIZATION REQUIRED)
   const handleRegister = () => {
     if (!DNI) return setError("Debes completar el campo del DNI");
@@ -159,6 +154,11 @@ export default function Asistencias() {
         setError(error);
       });
   };
+
+  // Check user session
+  if (checkSession()) {
+    return <Redirect href={"/login"} />;
+  }
   return (
     <ScrollView>
       <View
