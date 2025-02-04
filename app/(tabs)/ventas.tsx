@@ -13,6 +13,7 @@ import { Redirect } from "expo-router";
 import useAuth from "@/store/user";
 import Table from "@/components/ventas/table";
 import checkSession from "@/utils/checkSession";
+import usePrice from "@/store/prices";
 
 // Types
 interface List {
@@ -26,14 +27,13 @@ interface List {
 // Factorizar y optimizar estados y código
 export default function Ventas() {
   // States
-  const [total, setTotal] = useState<number>(0);
   const [tipoVenta, setTipoVenta] = useState("consumidor");
-  const [ventas, setVentas] = useState<string>("1500");
-  const [reventas, setReventas] = useState<string>("1000");
-  const [list, setList] = useState<Array<List>>([]);
+  const [list, setList] = useState<List[]>([]);
   const [error, setError] = useState("");
   const [count, setCount] = useState(0);
   const { user } = useAuth();
+  const { ventas, reventas, total, setReventas, setVentas, setTotal } =
+    usePrice();
 
   // Check user session
   if (checkSession()) return <Redirect href={"/login"} />;
@@ -57,7 +57,7 @@ export default function Ventas() {
       method: "GET",
     })
       .then((r) => r.json())
-      .then(({ success, message, data }) => {
+      .then(({ success, data }) => {
         if (success) {
           setVentas(data.venta);
           setReventas(data.reventa);
@@ -135,6 +135,15 @@ export default function Ventas() {
       .catch((e) => {
         Alert.alert("Error", "No se pudo guardar en la base de datos la venta");
       });
+  };
+
+  const calculateNewPrice = ({
+    newVentas = ventas,
+    newReventas = reventas,
+  }) => {
+    setTotal(
+      count * parseInt(tipoVenta == "consumidor" ? newVentas : newReventas)
+    );
   };
 
   // Calculate the total price
@@ -286,6 +295,7 @@ export default function Ventas() {
                 const regex = /^\d+$/;
                 if (regex.test(text) || text == "") {
                   setVentas(text);
+                  calculateNewPrice({ newVentas: text });
                 }
               }}
               value={ventas}
@@ -300,6 +310,7 @@ export default function Ventas() {
                 const regex = /^\d+$/;
                 if (regex.test(text) || text == "") {
                   setReventas(text);
+                  calculateNewPrice({ newReventas: text });
                 }
               }}
               value={reventas}
