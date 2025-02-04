@@ -1,7 +1,7 @@
 import checkSession from "@/utils/checkSession";
 import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Button, Pressable, ScrollView, Text, View } from "react-native";
 import { DataTable, TextInput } from "react-native-paper";
 
 // Types
@@ -79,9 +79,8 @@ export default function Asistencias() {
         }),
       })
         .then((r) => r.json())
-        .then(({ success, message, data }) => {
+        .then(({ success, data }) => {
           if (success) {
-            console.log({ data });
             setAsistencias(asistencias ? [...asistencias, data] : [data]);
           }
         })
@@ -93,38 +92,40 @@ export default function Asistencias() {
           hour12: false,
         });
         // Check if the dni and turno match and the user hasn't checked out
-        console.log({ a });
-        a.dni === DNI &&
+        if (a.dni === DNI || a.nombre == DNI) {
           a.turno === turno &&
-          a.estado === "incompleto" &&
-          fetch("https://asa-app-backend.onrender.com/asistencias/egreso", {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ...a,
-              out: now,
-              estado: "completo",
-            }),
-          })
-            .then((r) => r.json())
-            .then(
-              ({ success, data }: { data: Asistencia; success: boolean }) => {
-                if (success) {
-                  setAsistencias(
-                    asistencias!.map((a) =>
-                      a.dni === DNI && a.turno === turno && !a.out
-                        ? {
-                            ...data,
-                          }
-                        : a
-                    )
-                  );
+            a.estado === "incompleto" &&
+            fetch("https://asa-app-backend.onrender.com/asistencias/egreso", {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                ...a,
+                out: now,
+                estado: "completo",
+              }),
+            })
+              .then((r) => r.json())
+              .then(
+                ({ success, data }: { data: Asistencia; success: boolean }) => {
+                  if (success) {
+                    setAsistencias(
+                      asistencias!.map((a) =>
+                        (a.nombre === DNI || a.dni === DNI) &&
+                        a.turno === turno &&
+                        !a.out
+                          ? {
+                              ...data,
+                            }
+                          : a
+                      )
+                    );
+                  }
                 }
-              }
-            )
-            .catch((e) => console.log({ e }));
+              )
+              .catch((e) => console.log({ e }));
+        }
       });
     }
     setDNI("");
@@ -139,17 +140,24 @@ export default function Asistencias() {
         ({
           success,
           data,
+          error,
         }: {
           success: boolean;
           data: Asistencia[];
           message: string;
+          error: string;
         }) => {
           // If the request was successful, update state with the data
           if (success) {
             setAsistencias([...data]);
+          } else {
+            setError(error);
           }
         }
-      );
+      )
+      .catch(({ error }: { error: string; success: false }) => {
+        setError(error);
+      });
   };
   return (
     <ScrollView>
@@ -191,15 +199,10 @@ export default function Asistencias() {
             </Text>
           )}
           <TextInput
-            placeholder="DNI"
+            placeholder="Nombre o DNI"
             onChangeText={(text) => {
-              const regex = /^\d+$/;
-              if (regex.test(text) || text == "") {
-                setDNI(text);
-                setError("");
-              } else {
-                setError("Solo se permiten números");
-              }
+              setDNI(text);
+              setError("");
             }}
             value={DNI}
             placeholderTextColor={error ? "red" : "black"}
