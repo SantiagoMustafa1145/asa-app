@@ -1,21 +1,23 @@
 import { create } from "zustand";
 
 const usePrice = create((set) => ({
-  negocio: 800,
-  local: 1300,
-  setNegocio: (newPrice) => {
-    if (newPrice !== negocio) {
-      set((state) => ({
-        negocio: newPrice,
-      }));
-    }
+  reventas: 1000,
+  ventas: 1500,
+  total: 0,
+  setReventas: (newPrice) => {
+    set(() => ({
+      reventas: newPrice,
+    }));
   },
-  setLocal: (newPrice) => {
-    if (newPrice !== local) {
-      set((state) => ({
-        local: newPrice,
-      }));
-    }
+  setVentas: (newPrice) => {
+    set(() => ({
+      ventas: newPrice,
+    }));
+  },
+  setTotal: (newTotal) => {
+    set(() => ({
+      total: newTotal,
+    }));
   },
 }));
 
