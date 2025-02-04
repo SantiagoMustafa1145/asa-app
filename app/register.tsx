@@ -126,7 +126,7 @@ export default function RegisterView() {
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 placeholder="NOMBRE"
-                onChangeText={() => onChange(value.toLowerCase())}
+                onChangeText={(value) => onChange(value.toLowerCase())}
                 onBlur={onBlur}
                 value={value.toLowerCase()}
               />
