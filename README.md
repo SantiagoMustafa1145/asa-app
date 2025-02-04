@@ -25,7 +25,7 @@ Actualmente en su versión 1.4.9 permite el registro de ventas, información de 
   - [ ] Generar archivos PDF en donde se mostrará un resumen de:
     - [ ] Asistencias:
       - [ ] Horarios de entrada y salida de cada día (diferenciando los de la mañana y tarde).
-      - [ ] Total de horas trabajadas en la semana.
+      - [x] Total de horas trabajadas en la semana.
     - [ ] Distribuidores:
       - [ ] Total de bidones vendidos por día.
       - [ ] Total de bidones vendidos por semana.
@@ -41,4 +41,4 @@ Actualmente en su versión 1.4.9 permite el registro de ventas, información de 
       - [ ] Total pagado a los empleados.
       - [ ] Total de ingresos general.
       - [ ] Total de ingresos obtenidos por reventas.
-- [ ] Manejo de autenticación y roles
+- [x] Manejo de autenticación y roles
