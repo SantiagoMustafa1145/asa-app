@@ -330,39 +330,55 @@ export default function Asistencias() {
                 <DataTable.Title>INGRESO</DataTable.Title>
                 <DataTable.Title>EGRESO</DataTable.Title>
               </DataTable.Header>
-              {asistencias &&
-                asistencias.map(({ id, dni, nombre, entrada, out }) => {
-                  if (out) return;
-                  return (
-                    <DataTable.Row
-                      key={id}
-                      style={{ borderColor: "rgba(200, 60,60,.45)" }}
-                    >
-                      <DataTable.Cell>{nombre ? nombre : dni}</DataTable.Cell>
-                      <DataTable.Cell>{entrada}</DataTable.Cell>
-                      <DataTable.Cell>FALTA SALIDA</DataTable.Cell>
-                    </DataTable.Row>
-                  );
-                })}
+              {asistencias?.map(({ id, dni, nombre, entrada, out }) => {
+                if (out) return;
+                return (
+                  <DataTable.Row
+                    key={id}
+                    style={{ borderColor: "rgba(200, 60,60,.45)" }}
+                  >
+                    <DataTable.Cell>
+                      {nombre ? nombre.toLocaleUpperCase() : dni}
+                    </DataTable.Cell>
+                    <DataTable.Cell>{entrada}</DataTable.Cell>
+                    <DataTable.Cell>FALTA SALIDA</DataTable.Cell>
+                  </DataTable.Row>
+                );
+              })}
             </DataTable>
           </View>
-          <View>
+          <View
+            style={{
+              gap: 24,
+            }}
+          >
             <Text
               style={{ fontSize: 18, fontWeight: "bold", textAlign: "center" }}
             >
               Registros completados
             </Text>
-            <DataTable>
-              <DataTable.Header>
-                <DataTable.Title>NOMBRE</DataTable.Title>
-                <DataTable.Title>INGRESO</DataTable.Title>
-                <DataTable.Title>EGRESO</DataTable.Title>
-                <DataTable.Title>HORAS HECHAS</DataTable.Title>
-              </DataTable.Header>
-              {asistencias &&
-                asistencias.map(
-                  ({ id, dni, nombre, entrada, out, horas, estado }) => {
-                    if (!out || estado === "incompleto") return;
+            <View>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 18,
+                  fontWeight: "semibold",
+                  paddingVertical: 12,
+                }}
+              >
+                Turno mañana
+              </Text>
+              <DataTable>
+                <DataTable.Header>
+                  <DataTable.Title>NOMBRE</DataTable.Title>
+                  <DataTable.Title>INGRESO</DataTable.Title>
+                  <DataTable.Title>EGRESO</DataTable.Title>
+                  <DataTable.Title>HORAS HECHAS</DataTable.Title>
+                </DataTable.Header>
+                {asistencias?.map(
+                  ({ id, dni, nombre, entrada, out, horas, estado, turno }) => {
+                    if (!out || estado === "incompleto" || turno == "tarde")
+                      return;
                     return (
                       <DataTable.Row key={id}>
                         <DataTable.Cell>
@@ -375,7 +391,44 @@ export default function Asistencias() {
                     );
                   }
                 )}
-            </DataTable>
+              </DataTable>
+            </View>
+            <View>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 18,
+                  fontWeight: "semibold",
+                  paddingVertical: 12,
+                }}
+              >
+                Turno tarde
+              </Text>
+              <DataTable>
+                <DataTable.Header>
+                  <DataTable.Title>NOMBRE</DataTable.Title>
+                  <DataTable.Title>INGRESO</DataTable.Title>
+                  <DataTable.Title>EGRESO</DataTable.Title>
+                  <DataTable.Title>HORAS HECHAS</DataTable.Title>
+                </DataTable.Header>
+                {asistencias?.map(
+                  ({ id, dni, nombre, entrada, out, horas, estado, turno }) => {
+                    if (!out || estado === "incompleto" || turno == "mañana")
+                      return;
+                    return (
+                      <DataTable.Row key={id}>
+                        <DataTable.Cell>
+                          {nombre ? nombre.toLocaleUpperCase() : dni}
+                        </DataTable.Cell>
+                        <DataTable.Cell>{entrada}</DataTable.Cell>
+                        <DataTable.Cell>{out}</DataTable.Cell>
+                        <DataTable.Cell>{horas}</DataTable.Cell>
+                      </DataTable.Row>
+                    );
+                  }
+                )}
+              </DataTable>
+            </View>
           </View>
         </View>
       </View>
