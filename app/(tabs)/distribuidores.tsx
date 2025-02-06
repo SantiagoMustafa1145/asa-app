@@ -15,6 +15,7 @@ import checkSession from "@/utils/checkSession";
 import style from "@/css/distribuidores";
 import styles from "@/css/distribuidores";
 import useAuth from "@/store/user";
+import { getItemAsync } from "expo-secure-store";
 
 // Types
 interface Distribuidor {
@@ -49,11 +50,14 @@ export default function Distribuidores() {
   const [errorIngreso, setErrorIngreso] = useState("");
 
   // User
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   // Fetch data
   useEffect(() => {
     fetch("https://asa-app-backend.onrender.com/distribuidores/", {
+      headers: {
+        authorization: token,
+      },
       method: "GET",
     })
       .then((r) => r.json())
@@ -71,7 +75,11 @@ export default function Distribuidores() {
   };
 
   const actualizarDatos = () => {
+    console.log(token);
     fetch("https://asa-app-backend.onrender.com/distribuidores/", {
+      headers: {
+        authorization: token,
+      },
       method: "GET",
     })
       .then((r) => r.json())
@@ -90,6 +98,7 @@ export default function Distribuidores() {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        authorization: token,
       },
       body: JSON.stringify({
         nombre,
@@ -144,6 +153,7 @@ export default function Distribuidores() {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
+              authorization: token,
             },
             body: JSON.stringify({
               ...dist,
@@ -262,6 +272,7 @@ export default function Distribuidores() {
               style={{
                 gap: 32,
               }}
+              key={1}
             >
               <Text
                 style={{
@@ -318,6 +329,8 @@ export default function Distribuidores() {
                     Cantidad de bidones al salir
                   </Text>
                   <TextInput
+                    inputMode="numeric"
+                    keyboardType="numeric"
                     placeholder="Cantidad de bidones al salir"
                     style={styles.input}
                     onChangeText={(text) => {
@@ -334,6 +347,7 @@ export default function Distribuidores() {
               style={{
                 gap: 32,
               }}
+              key={2}
             >
               <Text
                 style={{
@@ -367,7 +381,8 @@ export default function Distribuidores() {
                   borderRadius: 8,
                 }}
               >
-                {distribuidores.length ? (
+                {distribuidores.filter((x) => x.estado === "incompleto")
+                  .length ? (
                   distribuidores.map((dist) => {
                     if (dist.estado === "completado") return;
                     return (
@@ -429,6 +444,8 @@ export default function Distribuidores() {
                                 dist.down =
                                   text == "" ? 0 : Number.parseInt(text);
                               }}
+                              inputMode="numeric"
+                              keyboardType="numeric"
                             />
                             <Text
                               style={{
@@ -445,6 +462,8 @@ export default function Distribuidores() {
                                 dist.empty =
                                   text == "" ? 0 : Number.parseInt(text);
                               }}
+                              inputMode="numeric"
+                              keyboardType="numeric"
                             />
                             <Text
                               style={{
@@ -461,6 +480,8 @@ export default function Distribuidores() {
                                 dist.sell =
                                   text == "" ? 0 : Number.parseInt(text);
                               }}
+                              inputMode="numeric"
+                              keyboardType="numeric"
                             />
                           </View>
                         </View>
