@@ -259,6 +259,8 @@ export default function Ventas() {
                 calculatePrice(data == "" ? 0 : Number.parseInt(data));
               }}
               value={count.toString()}
+              inputMode="numeric"
+              keyboardType="numeric"
             />
             {error && (
               <Text
@@ -306,6 +308,8 @@ export default function Ventas() {
                 }}
                 value={ventas}
                 style={styles.input}
+                inputMode="numeric"
+                keyboardType="numeric"
               />
             </View>
             <View>
@@ -321,6 +325,8 @@ export default function Ventas() {
                 }}
                 value={reventas}
                 style={styles.input}
+                inputMode="numeric"
+                keyboardType="numeric"
               />
             </View>
             <Button title="Guardar" onPress={handleTogglePrices} />
