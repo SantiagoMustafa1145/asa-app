@@ -3,6 +3,7 @@ import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 
 const useAuth = create((set) => ({
   user: null,
+  token: null,
   login: async ({ dni, password }) => {
     const response = await fetch(
       `https://asa-app-backend.onrender.com/auth?dni=${dni}&password=${password}`,
@@ -16,6 +17,7 @@ const useAuth = create((set) => ({
           setItemAsync("sessionToken", token);
           set(() => ({
             user: data,
+            token: token,
           }));
           return true;
         }
