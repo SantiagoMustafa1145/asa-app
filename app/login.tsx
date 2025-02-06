@@ -89,6 +89,8 @@ export default function LoginView() {
                     onChange(text);
                   }
                 }}
+                inputMode="numeric"
+                keyboardType="numeric"
                 onBlur={onBlur}
                 value={value}
                 style={styles.input}
@@ -105,6 +107,8 @@ export default function LoginView() {
                 onBlur={onBlur}
                 value={value}
                 style={styles.input}
+                textContentType="password"
+                caretHidden={true}
               />
             )}
           />
