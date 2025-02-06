@@ -116,6 +116,8 @@ export default function RegisterView() {
                     onChange(text);
                   }
                 }}
+                keyboardType="numeric"
+                inputMode="numeric"
                 onBlur={onBlur}
                 value={value}
               />
@@ -160,6 +162,7 @@ export default function RegisterView() {
                 onChangeText={onChange}
                 onBlur={onBlur}
                 value={value}
+                textContentType="password"
               />
             )}
           />
@@ -172,6 +175,7 @@ export default function RegisterView() {
                 onChangeText={onChange}
                 onBlur={onBlur}
                 value={value}
+                textContentType="password"
               />
             )}
           />
