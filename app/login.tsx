@@ -109,6 +109,7 @@ export default function LoginView() {
                 style={styles.input}
                 textContentType="password"
                 caretHidden={true}
+                secureTextEntry
               />
             )}
           />

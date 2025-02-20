@@ -3,6 +3,8 @@ import { Stack } from "expo-router/stack";
 import { StatusBar } from "react-native";
 import useAuth from "@/store/user";
 
+import "../global.css";
+
 export default function Layout() {
   const { loginWithToken } = useAuth();
 
@@ -17,6 +19,8 @@ export default function Layout() {
     <>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="register" options={{ headerShown: false }} />
       </Stack>
       <StatusBar barStyle={"dark-content"} />
     </>
