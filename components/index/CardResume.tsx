@@ -10,11 +10,7 @@ interface Props {
 export default function CardResume({ href, title, description }: Props) {
   return (
     <View style={styles.cart}>
-      <Link
-        href={href}
-        style={styles.link}
-        className="text-xl text-white font-semibold underline py-4"
-      >
+      <Link href={href} style={styles.link}>
         {title}
       </Link>
       <Text style={styles.text}>{description}</Text>
