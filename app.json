@@ -17,7 +17,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.asaapp"
+      "package": "com.asaapp",
+      "kotlinVersion": "1.9.25"
     },
     "web": {
       "bundler": "metro",
